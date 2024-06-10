@@ -15,17 +15,24 @@ class AmazonPride(Action):
 
     def character_current_stats(self, stats):
         self.attack = stats["attack"]
+        
 
     def perform(self, character, target):
+        action_stats = self.action_stats.copy()
+        action_stats["hit_power"] = 0
+        action_stats["damage"] = 0
         hit_power = int((character.attack * random.uniform(0, 1) + 100) - target.defense * random.uniform(0, 1))
-        target.current_health = target.current_health - hit_power
-        print(character.name + " hit " + str(hit_power) + " to " + target.name)
+        action_stats["hit_power"] = hit_power
+        damage = hit_power - target.defense * 0.5
+        action_stats["damage"] = damage
+        target.current_health = target.current_health - damage
+        return action_stats
 
 
 class Katriona(Warrior):
     def __init__(self):
         character_data = {
-            "health": 10000,
+            "health": 1000,
             "attack": 60,
             "special_attack": 250,
             "defense": 30,
@@ -33,7 +40,7 @@ class Katriona(Warrior):
         }
         super().__init__("Katriona", character_data)
         self.actions = {
-            "1": AmazonPride()
+            1: AmazonPride()
         }
 
 

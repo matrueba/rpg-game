@@ -17,11 +17,17 @@ class ForbiddenRite(Action):
         self.special_attack = stats["special_attack"]
 
     def perform(self, character, target):
-        hit_power = None
-        if character.mana >= 100:
-            hit_power = self.special_attack * 0.5 + 100
-            character.mana -= 100
-        return hit_power
+        action_stats = self.action_stats.copy()
+        action_stats["hit_power"] = 0
+        action_stats["damage"] = 0
+        if character.current_mana >= 100:
+            hit_power = character.special_attack * random.choice([0.4, 0.5, 0.6, 0.7, 0.8]) + 100
+            character.current_mana -= 100
+            damage = hit_power - target.special_defense * 0.5
+            target.current_health -= damage
+            action_stats["hit_power"] = hit_power
+            action_stats["damage"] = damage
+        return action_stats
 
 
 class MagicRecovery(Action):
@@ -46,17 +52,18 @@ class MagicRecovery(Action):
 class Wurk(Wizard):
     def __init__(self):
         character_data = {
-            "health": 10000,
+            "health": 800,
             "attack": 60,
             "special_attack": 250,
             "defense": 30,
             "special_defense": 120
         }
         super().__init__("Wurk", character_data)
-        self.mana = 1600
+        self.mana = 1200
+        self.current_mana = 1200
         self.actions = {
-            "1": ForbiddenRite(),
-            "2": MagicRecovery()
+            1: ForbiddenRite(),
+            2: MagicRecovery()
         }
 
     def dark_staff(self):

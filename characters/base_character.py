@@ -36,3 +36,8 @@ class BaseCharacter:
 
     def get_actions(self):
         return self.actions
+    
+    def get_info(self):
+        for key, value in self.__dict__.items():
+            if key != "actions" and key != "initial_stats" and key != None:      
+                print(key.replace('_', ' ') + " => " + str(value))
